@@ -1,4 +1,4 @@
-# FastAPI Google SSO Example
+# FastAPI Google SSO with JWT Cookies Example
 
 This project demonstrates how to implement Google Sign-Sign-On (SSO) with FastAPI, using `fastapi-sso` and `fastapi-jwt` for handling authentication and JWT tokens stored in HttpOnly cookies.
 
