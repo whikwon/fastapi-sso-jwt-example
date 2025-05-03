@@ -1,0 +1,18 @@
+[project]
+name = "fastapi-sso-example"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "bson>=0.5.10",
+    "dotenv>=0.9.9",
+    "fastapi[standard]>=0.115.12",
+    "fastapi-sso==0.18.0",
+    "motor>=3.7.0",
+    "pydantic>=2.11.4",
+    "pymongo>=4.12.1",
+    "uvicorn>=0.34.2",
+    "fastapi-jwt[authlib]>=0.3.0",
+    "odmantic>=1.0.2",
+]

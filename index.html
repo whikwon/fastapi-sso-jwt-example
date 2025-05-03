@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FastAPI Google SSO Test</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      .hidden {
+        display: none;
+      }
+      #userInfo,
+      #protectedData,
+      #tokenInfo {
+        margin-top: 15px;
+      }
+      pre {
+        background: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>FastAPI Google SSO Test</h1>
+
+    <div id="loggedOutState">
+      <p>You are not logged in.</p>
+      <a href="http://localhost:8000/auth/google/login">Login with Google</a>
+    </div>
+
+    <div id="loggedInState" class="hidden">
+      <p>Welcome!</p>
+      <div id="userInfo"></div>
+
+      <button id="fetchProtected">Test Protected Route</button>
+      <div id="protectedData"></div>
+
+      <button id="refreshToken">Refresh Token</button>
+      <button id="logoutButton">Logout</button>
+
+      <!-- New debug section -->
+      <button id="showTokenInfo">Show Token Info</button>
+      <div id="tokenInfo" class="hidden"><pre></pre></div>
+    </div>
+
+    <script>
+      const backendUrl = "http://localhost:8000";
+      const loggedInState = document.getElementById("loggedInState");
+      const loggedOutState = document.getElementById("loggedOutState");
+      const userInfoDiv = document.getElementById("userInfo");
+      const protectedData = document.getElementById("protectedData");
+      const fetchProtected = document.getElementById("fetchProtected");
+      const logoutButton = document.getElementById("logoutButton");
+      const refreshButton = document.getElementById("refreshToken");
+      const showTokenBtn = document.getElementById("showTokenInfo");
+      const tokenInfoDiv = document.getElementById("tokenInfo");
+
+      async function fetchData(url, opts = {}) {
+        const res = await fetch(url, { credentials: "include", ...opts });
+        if (!res.ok) return { error: `HTTP ${res.status}` };
+        return res.json().catch(() => ({}));
+      }
+
+      async function postData(url) {
+        return fetchData(url, {
+          method: "POST",
+          headers: { Accept: "application/json" },
+        });
+      }
+
+      async function checkLoginStatus() {
+        const userData = await fetchData(`${backendUrl}/api/user`);
+        if (userData && userData.id) {
+          loggedInState.classList.remove("hidden");
+          loggedOutState.classList.add("hidden");
+          userInfoDiv.innerHTML = `<pre>${JSON.stringify(
+            userData,
+            null,
+            2
+          )}</pre>`;
+        } else {
+          loggedInState.classList.add("hidden");
+          loggedOutState.classList.remove("hidden");
+        }
+      }
+
+      fetchProtected.addEventListener("click", async () => {
+        const data = await fetchData(`${backendUrl}/api/protected`);
+        protectedData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      });
+
+      refreshButton.addEventListener("click", async () => {
+        const result = await postData(`${backendUrl}/auth/refresh`);
+        protectedData.innerHTML = `<pre>${JSON.stringify(
+          result,
+          null,
+          2
+        )}</pre>`;
+      });
+
+      logoutButton.addEventListener("click", async () => {
+        await postData(`${backendUrl}/auth/logout`);
+        checkLoginStatus();
+      });
+
+      showTokenBtn.addEventListener("click", async () => {
+        const info = await fetchData(`${backendUrl}/auth/token-info`);
+        tokenInfoDiv.querySelector("pre").textContent = JSON.stringify(
+          info,
+          null,
+          2
+        );
+        tokenInfoDiv.classList.remove("hidden");
+      });
+
+      // Initial load
+      checkLoginStatus();
+    </script>
+  </body>
+</html>
