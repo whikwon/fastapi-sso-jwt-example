@@ -79,3 +79,4 @@ The frontend will be accessible at `http://localhost:9999` (matching the default
 
 - [FastAPI Security - OAuth2 with JWT](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/)
 - [k4black/fastapi-jwt](https://github.com/k4black/fastapi-jwt) (Note: `fastapi-jwt-auth` is unmaintained and might cause conflicts with `fastapi-sso`)
+- [tomasvotava/fastapi-sso](https://github.com/tomasvotava/fastapi-sso/tree/master)
